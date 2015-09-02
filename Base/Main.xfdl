@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FDL version="1.5">
+  <TypeDefinition url="..\default_typedef.xml"/>
+  <Form id="Main" classname="Main" left="0" top="0" width="1024" height="768" titletext="New Form">
+    <Layouts>
+      <Layout>
+        <Button id="Button00" taborder="0" text="Bind local static data" left="67.48%" top="48" right="9.57%" height="45" onclick="Button00_onclick"/>
+        <Grid id="Grid00" taborder="1" useinputpanel="false" left="2.64%" top="48" right="38.57%" height="154" binddataset="weatherDS">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="120"/>
+                <Column size="97"/>
+                <Column size="384"/>
+              </Columns>
+              <Rows>
+                <Row size="24" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="city"/>
+                <Cell col="1" text="main"/>
+                <Cell col="2" text="description"/>
+              </Band>
+              <Band id="body">
+                <Cell text="bind:city"/>
+                <Cell col="1" text="bind:main"/>
+                <Cell col="2" text="bind:description"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+        <Grid id="Grid01" taborder="2" useinputpanel="false" left="2.83%" top="491" right="38.57%" height="208" binddataset="restaurants">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="206"/>
+                <Column size="392"/>
+              </Columns>
+              <Rows>
+                <Row size="24" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="id"/>
+                <Cell col="1" text="name"/>
+              </Band>
+              <Band id="body">
+                <Cell text="bind:id"/>
+                <Cell col="1" text="bind:name"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+        <Button id="Button01" taborder="3" text="Bind directly to external API" left="67.48%" top="491" right="9.57%" height="45" onclick="Button01_onclick"/>
+        <Grid id="Grid02" taborder="4" useinputpanel="false" left="2.64%" top="250" right="38.57%" height="188" binddataset="restaurants_local">
+          <Formats>
+            <Format id="default">
+              <Columns>
+                <Column size="80"/>
+                <Column size="181"/>
+                <Column size="340"/>
+              </Columns>
+              <Rows>
+                <Row size="24" band="head"/>
+                <Row size="24"/>
+              </Rows>
+              <Band id="head">
+                <Cell text="Checkins"/>
+                <Cell col="1" text="Name"/>
+                <Cell col="2" text="Address"/>
+              </Band>
+              <Band id="body">
+                <Cell text="bind:Checkins"/>
+                <Cell col="1" text="bind:Name"/>
+                <Cell col="2" text="bind:Address"/>
+              </Band>
+            </Format>
+          </Formats>
+        </Grid>
+        <Button id="Button02" taborder="5" text="Bind to data from own server" left="67.48%" top="250" right="9.57%" height="45" onclick="Button02_onclick"/>
+      </Layout>
+    </Layouts>
+    <Objects>
+      <Dataset id="weatherDS" firefirstcount="0" firenextcount="0" useclientlayout="false" updatecontrol="true" enableevent="true" loadkeymode="keep" loadfiltermode="keep" reversesubsum="false">
+        <ColumnInfo>
+          <Column id="city" type="STRING" size="256"/>
+          <Column id="main" type="STRING" size="256"/>
+          <Column id="description" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="restaurants" firefirstcount="0" firenextcount="0" useclientlayout="false" updatecontrol="true" enableevent="true" loadkeymode="keep" loadfiltermode="keep" reversesubsum="false">
+        <ColumnInfo>
+          <Column id="id" type="STRING" size="256"/>
+          <Column id="name" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+      <Dataset id="restaurants_local" firefirstcount="0" firenextcount="0" useclientlayout="false" updatecontrol="true" enableevent="true" loadkeymode="keep" loadfiltermode="keep" reversesubsum="false">
+        <ColumnInfo>
+          <Column id="Checkins" type="STRING" size="256"/>
+          <Column id="Name" type="STRING" size="256"/>
+          <Column id="Address" type="STRING" size="256"/>
+        </ColumnInfo>
+      </Dataset>
+    </Objects>
+    <Script type="xscript5.0"><![CDATA[this.Button00_onclick = function(obj:Button,  e:nexacro.ClickEventInfo)
+{
+	var bostonWeather = {};
+	bostonWeather.city = "Boston";
+	bostonWeather.main = "Sunshine";
+	bostonWeather.description = "It is going to be a beautiful and sunny day. Perfect for some tea on the shore";
+	var londonWeather = {};
+	londonWeather.city = "London";
+	londonWeather.main = "Cloudy";
+	londonWeather.description = "Occassional showers with no chance of sunlinght. What a gloomy looking day!";
+	
+	var weatherData = [bostonWeather, londonWeather];
+	
+	this.weatherDS.bindJSON(weatherData);
+}
+
+this.Button01_onclick = function(obj:Button,  e:nexacro.ClickEventInfo)
+{
+	this.transaction(
+		"search_restaurants",
+		"https://api.foursquare.com/v2/venues/search?client_id=4HEHVGR2C4HXATAEWXP4VUTQRFP42KAI3EMNFCVH41VNQYZW&client_secret=LJDPXM2IM3Z0NN2P1IPDTCBQ5T332TCVOWTJXI1Q5IZG14LA&v=20140806&near=brooklyn" +
+		"&query=pizza",
+		null,
+		"restaurants=response.venues",
+		null,
+		null,
+		true,
+		4,
+		false
+	);
+}
+
+this.Button02_onclick = function(obj:Button,  e:nexacro.ClickEventInfo)
+{
+	this.transaction(
+	"local_restaurants", 
+	"http://trainingserver.nexaweb.com:8080/Sixteen/search/astoria/pizza",
+	null,
+	"restaurants_local=ds_out",
+	"",
+	"",
+	true
+	);
+}
+]]></Script>
+  </Form>
+</FDL>
